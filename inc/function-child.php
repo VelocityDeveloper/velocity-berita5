@@ -159,3 +159,28 @@ function velocity_berita5_info_post()
     }
     echo '</div>';
 }
+
+/**
+ * Tombol bagikan. justg_share() pindah dari tema induk ke Velocity Addons 2.x; situs dengan
+ * Velocity Addons lama + induk baru tidak punya fungsinya (dulu fatal error di artikel).
+ */
+function velocity_berita5_share()
+{
+    if (function_exists('justg_share')) {
+        return justg_share();
+    }
+    $url   = rawurlencode(get_permalink());
+    $judul = rawurlencode(get_the_title());
+    $tujuan = array(
+        'facebook' => array('Facebook', '#2d59a1', 'https://www.facebook.com/sharer/sharer.php?u=' . $url),
+        'twitter'  => array('Twitter', '#14171a', 'https://twitter.com/intent/tweet?text=' . $judul . '&url=' . $url),
+        'whatsapp' => array('WhatsApp', '#25d366', 'https://wa.me/?text=' . $judul . '%20' . $url),
+        'telegram' => array('Telegram', '#0088cc', 'https://t.me/share/url?url=' . $url . '&text=' . $judul),
+        'envelope' => array('Email', '#444444', 'mailto:?subject=' . $judul . '&body=' . $url),
+    );
+    $html = '<div class="berita-share py-2"><small class="fw-bold d-block mb-1">' . esc_html__('Bagikan', 'justg') . '</small>';
+    foreach ($tujuan as $ikon => $t) {
+        $html .= '<a class="btn btn-sm text-white rounded-0 me-1 mb-1" style="background:' . esc_attr($t[1]) . '" href="' . esc_url($t[2]) . '" target="_blank" rel="noopener" aria-label="' . esc_attr($t[0]) . '"><i class="fa fa-' . esc_attr($ikon) . '" aria-hidden="true"></i></a>';
+    }
+    return $html . '</div>';
+}
