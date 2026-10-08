@@ -11,7 +11,6 @@ defined('ABSPATH') || exit;
 
 get_header();
 $container  = velocitytheme_option('justg_container_type', 'container');
-$full_url   = get_the_post_thumbnail_url(get_the_ID(), 'full');
 $format     = get_post_format() ?: 'standard';
 ?>
 
@@ -39,40 +38,19 @@ $format     = get_post_format() ?: 'standard';
                     <?php the_title('<h1 class="entry-title h4 fw-bold">', '</h1>'); ?>
 
 
-                    <div class="d-flex mt-2 justify-content-between align-items-center py-1 px-2 border-bottom border-top text-muted bg-light mb-3">
-                        <div>
-                            <small>
-                                Posted by : <?php echo get_the_author(); ?>
-                            </small>
-                            <small class="ms-2">
-                                <?php echo get_the_date(); ?>
-                            </small>
-                            <?php $gettags = get_the_tags(get_the_ID()); ?>
-                            <?php if ($gettags) : ?>
-                                <small class="ms-2">
-                                    Tags :
-                                    <?php foreach ($gettags as $index => $tag) : ?>
-                                        <?php echo $index === 0 ? '' : ','; ?>
-                                        <a href="<?php echo get_tag_link($tag->term_id); ?>"> <?php echo $tag->name; ?> </a>
-                                        <?php if ($index > 1) {
-                                            break;
-                                        } ?>
-                                    <?php endforeach; ?>
-                                </small>
-                            <?php endif; ?>
-                        </div>
-                        <div class="d-none d-md-inline-block">
-                            <a class="btn btn-sm btn-light border shadow-sm" style="--bs-btn-font-size: .65rem;" href="<?php echo get_the_permalink(); ?>#respond">
-                                <?php echo get_comments_number() == 0 ? 'Reply' : get_comments_number() . ' comments'; ?>
-                            </a>
-                        </div>
-                    </div>
+                    <?php velocity_berita5_info_post(); ?>
 
                     <div class="entry-content">
 
                         <?php
-                        if ($full_url && $format !== 'video') {
-                            echo '<img class="img-fluid w-100 mb-2" src="' . $full_url . '" loading="lazy">';
+                        if (has_post_thumbnail() && $format !== 'video') {
+                            echo '<figure class="mb-3">';
+                            the_post_thumbnail('large', array('class' => 'img-fluid w-100', 'alt' => esc_attr(get_the_title()), 'loading' => false, 'fetchpriority' => 'high'));
+                            $caption = get_the_post_thumbnail_caption();
+                            if ($caption) {
+                                echo '<figcaption class="small text-muted mt-1">' . esc_html($caption) . '</figcaption>';
+                            }
+                            echo '</figure>';
                         }
                         ?>
 
@@ -94,7 +72,7 @@ $format     = get_post_format() ?: 'standard';
 
                     <div class="related-post">
                         <div class="related-post-title border-bottom border-color-theme border-3 mb-2">
-                            <span class="bg-color-theme text-white py-2 px-3 d-inline-block">RELATED POSTS</span>
+                            <span class="bg-color-theme text-white py-2 px-3 d-inline-block"><?php esc_html_e('BERITA TERKAIT', 'justg'); ?></span>
                         </div>
                         <div class="related-post-carousel overflow-hidden">
                             <?php
@@ -117,11 +95,11 @@ $format     = get_post_format() ?: 'standard';
                                 <?php
                                 $prev_post = get_adjacent_post(false, '', true);
                                 if (!empty($prev_post)) {
-                                    echo '<a href="' . get_permalink($prev_post->ID) . '" class="btn btn-sm btn-light border" title="' . $prev_post->post_title . '">Prev</a>';
+                                    echo '<a href="' . esc_url(get_permalink($prev_post->ID)) . '" class="btn btn-sm btn-light border" title="' . esc_attr(get_the_title($prev_post)) . '">&laquo; ' . esc_html__('Sebelumnya', 'justg') . '</a>';
                                 }
                                 $next_post = get_adjacent_post(false, '', false);
                                 if (!empty($next_post)) {
-                                    echo '<a href="' . get_permalink($next_post->ID) . '" class="btn btn-sm btn-light border" title="' . $next_post->post_title . '">Next</a>';
+                                    echo '<a href="' . esc_url(get_permalink($next_post->ID)) . '" class="btn btn-sm btn-light border" title="' . esc_attr(get_the_title($next_post)) . '">' . esc_html__('Berikutnya', 'justg') . ' &raquo;</a>';
                                 }
                                 ?>
                             </div>
@@ -131,15 +109,15 @@ $format     = get_post_format() ?: 'standard';
                     <div class="mostview-post">
                         <div class="row">
                             <div class="col-md-6 col-xl-7">
-                                <h6 class="mb-3">MOST VIEW ARTICLE</h6>
+                                <h6 class="mb-3 fw-bold"><?php esc_html_e('BERITA TERPOPULER', 'justg'); ?></h6>
                                 <div class="mostview-post-loop">
                                     <?php
-                                    $post1_args = array(
-                                        'post_type' => 'post',
-                                        'cat'       => $post1_cat,
+                                    module_vdposts(array(
+                                        'post_type'      => 'post',
                                         'posts_per_page' => 5,
-                                    );
-                                    module_vdposts($post1_args, 'posts4');
+                                        'post__not_in'   => array(get_the_ID()),
+                                        'sortby'         => 'view',
+                                    ), 'posts4');
                                     ?>
                                 </div>
                             </div>
@@ -149,22 +127,24 @@ $format     = get_post_format() ?: 'standard';
                         </div>
                     </div>
 
-                    <div class="sosmed-single alert alert-light rounded-0 shadow-sm my-3">
-                        <h6 class="fw-bold">FOLLOW US</h6>
-                        <div class="row">
-                            <?php
-                            $sosmed = ['facebook' => '#2d59a1', 'twitter' => '#079be3', 'instagram' => '#e72283', 'youtube' => '#DD2C26'];
-                            foreach ($sosmed as $key => $color) {
-                                $datalink  = velocitytheme_option('link_sosmed_' . $key);
-                                if ($datalink) {
-                                    echo '<div class="col-3 pb-2">';
-                                    echo '<a class="btn border-0 shadow-sm rounded-0 w-100 btn-secondary" style="--bs-btn-bg:' . $color . '" href="' . $datalink . '" target="_blank"><i class="fa fa-' . $key . '"></i></a>';
-                                    echo '</div>';
-                                }
-                            }
-                            ?>
+                    <?php
+                    $sosmed_warna = array('facebook' => '#2d59a1', 'twitter' => '#14171a', 'instagram' => '#e72283', 'youtube' => '#DD2C26');
+                    $sosmed_ada   = array_filter(array_map(function ($key) {
+                        return get_theme_mod('link_sosmed_' . $key, '');
+                    }, array_combine(array_keys($sosmed_warna), array_keys($sosmed_warna))));
+                    ?>
+                    <?php if ($sosmed_ada) : ?>
+                        <div class="sosmed-single alert alert-light rounded-0 shadow-sm my-3">
+                            <h6 class="fw-bold"><?php esc_html_e('IKUTI KAMI', 'justg'); ?></h6>
+                            <div class="row g-2">
+                                <?php foreach ($sosmed_ada as $key => $datalink) : ?>
+                                    <div class="col">
+                                        <a class="btn border-0 shadow-sm rounded-0 w-100 btn-secondary" style="--bs-btn-bg:<?php echo esc_attr($sosmed_warna[$key]); ?>" href="<?php echo esc_url($datalink); ?>" target="_blank" rel="noopener" aria-label="<?php echo esc_attr(ucfirst($key)); ?>"><i class="fa fa-<?php echo esc_attr($key); ?>" aria-hidden="true"></i></a>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php endif; ?>
 
                 <?php
 

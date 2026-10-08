@@ -4,9 +4,18 @@
         <?php esc_html_e('Main Navigation', 'justg'); ?>
     </h2>
     <div class="head-part-top bg-transparent mb-2">
-        <div class="row align-items-center">
+        <div class="row align-items-center g-0">
             <div class="col-md-5 col-xl-4">
-                <?php echo the_custom_logo(); ?>
+                <?php if (has_custom_logo()) : ?>
+                    <?php the_custom_logo(); ?>
+                <?php else : ?>
+                    <a class="site-title-berita d-inline-block py-2 text-decoration-none" href="<?php echo esc_url(home_url('/')); ?>" rel="home">
+                        <span class="d-block fw-bold"><?php bloginfo('name'); ?></span>
+                        <?php if (get_bloginfo('description')) : ?>
+                            <small class="d-block"><?php bloginfo('description'); ?></small>
+                        <?php endif; ?>
+                    </a>
+                <?php endif; ?>
             </div>
             <div class="col-md d-none d-md-block">
                 <?php get_berita_iklan('iklan_header_1'); ?>
@@ -18,13 +27,13 @@
 
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarNavOffcanvas" aria-controls="navbarNavOffcanvas" aria-expanded="false" aria-label="<?php esc_attr_e('Toggle navigation', 'justg'); ?>">
                 <span class="navbar-toggler-icon"></span>
-                <small>Menu</small>
+                <small><?php esc_html_e('Menu', 'justg'); ?></small>
             </button>
 
             <div class="offcanvas bg-dark offcanvas-start" tabindex="-1" id="navbarNavOffcanvas">
 
                 <div class="offcanvas-header justify-content-end">
-                    <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="<?php esc_attr_e('Tutup', 'justg'); ?>"></button>
                 </div><!-- .offcancas-header -->
 
                 <!-- The WordPress Menu goes here -->
@@ -44,10 +53,8 @@
                 ?>
             </div><!-- .offcanvas -->
         </div>
-        <div class="search-header">
-
-        </div>
     </div>
+    <?php if (has_nav_menu('secondary')) : ?>
     <div class="secondary-menu position-relative bg-color-theme-secondary">
         <?php
         wp_nav_menu(
@@ -64,4 +71,5 @@
         );
         ?>
     </div>
+    <?php endif; ?>
 </nav><!-- .site-navigation -->

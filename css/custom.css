@@ -102,7 +102,8 @@ small {
 }
 .part_posts_home_4 a:hover,
 .part_posts_home_1 a:hover {
-  color: #000000;
+  color: #ffffff;
+  text-decoration: underline;
 }
 .part_posts_home_4 {
   color: #fff;
@@ -110,24 +111,89 @@ small {
 .carousel-post-item {
   width: 100%;
 }
-.part_posts_home_3 {
-  border: 5px solid var(--image.png);
-}
-.part_posts_home_3,
 .widget_berita_tabs,
 .part_posts_sidebar_1,
 .part_posts_sidebar_2 {
   border: 5px solid var(--color-theme);
 }
+.part_posts_home_3 {
+  border: 5px solid var(--color-theme);
+}
 .post-home-footer {
   background-color: #f5f5f5;
 }
-.home-bottom {
-}
 .footer-widget,
 .footer-widget a {
-    color: #fff;
+  color: #fff;
 }
+/* Gambar berita mengisi kotak rasio tanpa gepeng. */
+.ratio > a {
+  display: block;
+}
+.ratio img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vdposts-noimg {
+  background: linear-gradient(135deg, #e9ecef, #dee2e6);
+}
+/* Isi widget sidebar (dulu dibungkus div pembuka di after_title). */
+#main-sidebar .widget > .widget-title + *,
+.widget-area .widget > .widget-title + * {
+  margin-top: 0.75rem;
+}
+.widget-area .widget {
+  margin-bottom: 1.5rem;
+}
+.site-title-berita,
+.site-title-berita:hover {
+  color: var(--color-theme);
+}
+.site-title-berita small {
+  color: var(--bs-secondary-color);
+}
+.site-title-berita {
+  padding-left: 0.75rem;
+}
+.site-title-berita span {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+.top-header-berita .badge {
+  font-weight: 600;
+}
+.search-top-berita .form-control:focus {
+  box-shadow: none;
+}
+.part_posts_home_1 .title-half {
+  width: 49%;
+}
+.widget-title .btn,
+.widget-title .btn:visited {
+  line-height: 1.4;
+  color: #000 !important;
+}
+.head-part-top .berita-iklan {
+  padding: 0.5rem 0;
+}
+.berita-iklan img {
+  max-width: 100%;
+  height: auto;
+}
+/* Slot header dirancang 728x90; gambar lama yang lebih tinggi tidak membuat header menjulang. */
+.part_iklan_header_1 img {
+  max-height: 120px;
+  width: auto;
+}
+.single-post-nav .btn-group .btn {
+  font-size: 0.75rem;
+}
+.entry-content img {
+  max-width: 100%;
+  height: auto;
+}
+
 @media (min-width: 768px) {
   .right-sidebar {
     max-width: 30%;
@@ -160,9 +226,26 @@ small {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
   #page {
-    padding: 1rem;
+    padding: 0;
+  }
+  .container-home-first {
+    padding: 0.75rem !important;
+  }
+  .part_posts_home_1 .title-half {
+    width: 100%;
+  }
+  /* Menu sekunder satu baris, bisa digeser. */
+  .secondary-menu #secondary-menu {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .secondary-menu #secondary-menu .nav-link {
+    padding: 0.4rem 0.6rem;
   }
   #carouselHome .carousel-indicators {
     margin-bottom: 0.1rem;
