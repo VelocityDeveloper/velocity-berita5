@@ -33,6 +33,12 @@ foreach ($includes as $include) {
 	require_once($inc . '/' . $include);
 }
 
+// Kolom Kanan (part-sidebar.php, dari Customizer) tetap tampil walau widget Main Sidebar kosong: induk velocity
+// 2.7.5 hanya merender sidebar bila main-sidebar aktif (tribunnewsupdate.com 2026-10-20).
+add_filter('is_active_sidebar', function ($aktif, $index) {
+	return $index === 'main-sidebar' ? true : $aktif;
+}, 10, 2);
+
 //action add before main widget
 add_action('justg_before_main_sidebar', 'sidebar_kanan_konten');
 function sidebar_kanan_konten()
